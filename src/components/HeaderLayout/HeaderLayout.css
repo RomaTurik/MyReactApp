@@ -1,0 +1,11 @@
+
+button{
+    border: none;
+    background: transparent;
+}
+.modal-btn{
+    padding: 5px;
+}
+.nav-btn{
+    font-size: 16px;
+}
