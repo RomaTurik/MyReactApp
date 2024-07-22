@@ -15,22 +15,23 @@ export default function AppComments() {
         itemLayout="vertical"
         size="large"
         pagination={{
-          onChange: (page) => {
-            console.log(page);
-          },
           pageSize: 3,
         }}
         dataSource={assets}
-        renderItem={(item) => (
-          <List.Item key={item.title}>
-            <List.Item.Meta
-              avatar={<Avatar icon={<UserOutlined />} />}
-              title={item.name}
-              description={item.description}
-            />
-            {item.content}
-          </List.Item>
-        )}
+        renderItem={(item) =>
+          item.message.map((message, i) => {
+            return (
+              <List.Item key={message.title + i}>
+                <List.Item.Meta
+                  avatar={<Avatar icon={<UserOutlined />} />}
+                  title={item.name}
+                  description={message.content}
+                />
+                {item.content}
+              </List.Item>
+            );
+          })
+        }
       />
     </>
   );
