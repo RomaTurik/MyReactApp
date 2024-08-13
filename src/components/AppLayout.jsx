@@ -17,7 +17,7 @@ export default function AppLayout() {
   if (loading) {
     return <Spin fullscreen="true" size="large"></Spin>;
   }
-  if (registeredUser) console.log("object");
+  if (registeredUser);
   return (
     <Layout className="app-content" style={layoutStyle}>
       <HeaderLayout onClick={(current) => setPage(current)} />

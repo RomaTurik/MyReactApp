@@ -16,8 +16,8 @@ export function DataProviderContext({ children }) {
   const [registeredUser, setRegisteredUser] = useState(
     "Пользователь не зарегестрирован"
   );
+  const [registeredUserMessages, setRegisteredUserMessages] = useState([])
 
-  const userInput = document.querySelector("#find-user-input");
 
   useEffect(() => {
     setTimeout(() => {
@@ -36,12 +36,31 @@ export function DataProviderContext({ children }) {
   }, []);
 
   function AddAssets(values) {
-    const usersData = users.add(values.name);
-    setAssets((prev) => prev.concat(values));
-    setUsers(usersData);
-    if (userInput.value == "") {
-      setSortedUsers(usersData);
+    // const usersData = users.add(values.name);
+    const users =  assets.find((user)=>{
+      return user.name == values.name
+    })
+    const dataAssets = assets
+
+    if(users){
+      const newAssets = dataAssets.map((item)=>{
+        if (item == users){
+          item.message = item.message.concat(values.message)
+          console.log(item);
+        }
+        return item
+      })
+      setAssets(newAssets)
     }
+    // setAssets((prev) => prev.concat(values));
+    // setUsers(usersData);
+    // if (userInput.value == "") {
+    //   setSortedUsers(usersData);
+    // }
+  }
+
+  function AddComment(comment){
+    setRegisteredUserMessages((prev)=> prev.concat(comment))
   }
 
   function FindUser(username) {
@@ -53,8 +72,14 @@ export function DataProviderContext({ children }) {
     });
     setSortedUsers(newSortedUsers);
   }
+
   function SignIn(username) {
+    const user = assets.find((u)=>{
+      return u.name == username
+    })
     setRegisteredUser(username);
+    setRegisteredUserMessages((prev) => prev.concat(user.message))
+
   }
 
   return (
@@ -65,9 +90,11 @@ export function DataProviderContext({ children }) {
         users,
         sortedUsers,
         registeredUser,
+        registeredUserMessages,
         SignIn,
         FindUser,
         AddAssets,
+        AddComment
       }}
     >
       {children}

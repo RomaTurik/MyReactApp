@@ -1,22 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, List, Skeleton, Typography } from "antd";
+import { Avatar, Button, List, message, Skeleton, Typography } from "antd";
 import "./AccountAppStyle.css";
 import DataContext from "../../context/DataProvider";
 
-const data = [
-  "Racing car sprays burning fuel into crowd.",
-  "Japanese princess to wed commoner.",
-  "Australian walks 100km after outback crash.",
-  "Man charged over missing wedding girl.",
-  "Los Angeles battles huge wildfires.",
-];
+
+
 
 export default function AccountApp({ user }) {
-  const { assets, users } = useContext(DataContext);
-  console.log(assets);
+  const { registeredUserMessages, assets } = useContext(DataContext);
+  
+  addUserData(assets)
 
-  console.log({ user });
   return (
     <div className="account-container">
       {user == "Пользователь не зарегестрирован" && (
@@ -42,11 +37,11 @@ export default function AccountApp({ user }) {
           <List
             size="large"
             bordered
-            dataSource={data}
+            dataSource={registeredUserMessages}
             renderItem={(item) => (
               <List.Item>
-                <h2>Title</h2>
-                {item}
+                <h2 style={{marginBottom: 10}}>{item.title}</h2>
+                {item.content}
               </List.Item>
             )}
           />

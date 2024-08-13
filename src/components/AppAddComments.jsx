@@ -17,17 +17,23 @@ const validateMessages = {
 /* eslint-enable no-template-curly-in-string */
 
 export default function AppAddCommets() {
-  const { assets, AddAssets } = useContext(DataContext);
+  const { assets, AddAssets, AddComment, registeredUser } = useContext(DataContext);
   const [form] = useForm();
 
   function onFinish(values) {
-    const data = values.user;
+    const user = values.user
+
     const assets = {
-      name: data.name,
-      description: data.title,
-      content: data.comment,
-    };
+      name: user.name,
+      message: {
+        title: user.title,
+        content: user.comment
+      }
+    }
+    
+    console.log(assets.message);
     AddAssets(assets);
+    AddComment([assets.message])
     form.resetFields();
   }
 
@@ -53,13 +59,13 @@ export default function AppAddCommets() {
             },
           ]}
         >
-          <Input />
+          <Input disabled={registeredUser == 'Пользователь не зарегестрирован'} />
         </Form.Item>
         <Form.Item name={["user", "title"]} label="Title">
-          <Input />
+          <Input disabled={registeredUser == 'Пользователь не зарегестрирован'} />
         </Form.Item>
         <Form.Item name={["user", "comment"]} label="Comment">
-          <Input.TextArea style={{ height: 200 }} />
+          <Input.TextArea style={{ height: 200 }} disabled={registeredUser == 'Пользователь не зарегестрирован'} />
         </Form.Item>
         <Form.Item
           wrapperCol={{

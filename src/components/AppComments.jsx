@@ -6,6 +6,17 @@ import DataContext from "../context/DataProvider";
 
 export default function AppComments() {
   const { assets } = useContext(DataContext);
+  
+  const data = assets.reduce((acc,val)=>{
+    const messages = val.message.map((message)=>{
+      return {
+        name: val.name,
+        userMessage: message,
+      }
+    })
+    return acc.concat(messages)
+  },[])
+
 
   return (
     <>
@@ -17,20 +28,19 @@ export default function AppComments() {
         pagination={{
           pageSize: 3,
         }}
-        dataSource={assets}
-        renderItem={(item) =>
-          item.message.map((message, i) => {
-            return (
-              <List.Item key={message.title + i}>
-                <List.Item.Meta
-                  avatar={<Avatar icon={<UserOutlined />} />}
-                  title={item.name}
-                  description={message.content}
-                />
-                {item.content}
-              </List.Item>
-            );
-          })
+        dataSource={data}
+        renderItem={(item) =>{
+          return (
+            <List.Item key={item}>
+              <List.Item.Meta
+                avatar={<Avatar icon={<UserOutlined />} />}
+                title={item.name}
+                description={item.userMessage.title}
+              />
+              {item.userMessage.content}
+            </List.Item>
+          );
+        }
         }
       />
     </>
