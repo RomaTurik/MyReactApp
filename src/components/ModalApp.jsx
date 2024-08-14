@@ -3,76 +3,12 @@ import { UserOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import DataContext from "../context/DataProvider";
 import { useForm } from "antd/es/form/Form";
-import * as fs from 'fs'
-import {writeFile} from 'fs'
 
 
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 
-
-// function addUserData(data){
-    
-  // const fs = require('node:fs')
-  // let content = 'export const data = [ \n'
-
-  // function messageContent(num){
-  //     let message = '[\n' 
-  //     let messageContent = data[num]['message']
-  
-  //     for (let i = 0; i < messageContent.length; i++) {
-  //         message += '{\n'
-  //         for(var key in messageContent[i]){
-  //             message += key + ': '
-  //             message += '"' + messageContent[i][key] + '"' + ',\n'
-  //         }
-  //         message += '}, \n'
-          
-  //     }
-  //     message += '],\n'
-  //     return message
-      
-  
-  // }
-  
-  // for (let i = 0; i < data.length; i++) {
-  //     const obj = data[i]
-  //     content += '{\n'
-  //     for(var key in obj){
-  //         if (key == "password"){
-  //             content += key + ': '
-  //             content +=  obj[key] + ',\n'
-  //             continue
-  //         }
-  //         else if (key == "message"){
-  //             content += key + ': '
-  //             content += messageContent(i)
-  //             continue
-  //         }
-  //         content += key + ': '
-  //         content += '"' + obj[key] + '"' + ',\n'
-  //     }
-  //     content += "},\n"
-      
-  // }
-
-  // content += "]"
-
-//   fs.writeFile('./src/data.js', "content", err=>{
-//       if(err){
-//           console.log(err);
-//       }
-//   })
-
-//   console.log('done');
-// }
-
-writeFile('./src/data.js', "content", err=>{
-  if(err){
-      console.log(err);
-  }
-})
 
 export default function ModalApp({ onClickPage }) {
   const { assets, SignIn, registeredUser } = useContext(DataContext);

@@ -9,8 +9,6 @@ import DataContext from "../../context/DataProvider";
 
 export default function AccountApp({ user }) {
   const { registeredUserMessages, assets } = useContext(DataContext);
-  
-  addUserData(assets)
 
   return (
     <div className="account-container">
