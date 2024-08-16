@@ -17,23 +17,24 @@ const validateMessages = {
 /* eslint-enable no-template-curly-in-string */
 
 export default function AppAddCommets() {
-  const { assets, AddAssets, AddComment, registeredUser } = useContext(DataContext);
+  const { assets, AddAssets, AddComment, registeredUser, handleAddItem } =
+    useContext(DataContext);
   const [form] = useForm();
 
   function onFinish(values) {
-    const user = values.user
+    const user = values.user;
 
     const assets = {
       name: user.name,
       message: {
         title: user.title,
-        content: user.comment
-      }
-    }
-    
+        content: user.comment,
+      },
+    };
+
     console.log(assets.message);
     AddAssets(assets);
-    AddComment([assets.message])
+    AddComment([assets.message]);
     form.resetFields();
   }
 
@@ -59,13 +60,20 @@ export default function AppAddCommets() {
             },
           ]}
         >
-          <Input disabled={registeredUser == 'Пользователь не зарегестрирован'} />
+          <Input
+            disabled={registeredUser == "Пользователь не зарегестрирован"}
+          />
         </Form.Item>
         <Form.Item name={["user", "title"]} label="Title">
-          <Input disabled={registeredUser == 'Пользователь не зарегестрирован'} />
+          <Input
+            disabled={registeredUser == "Пользователь не зарегестрирован"}
+          />
         </Form.Item>
         <Form.Item name={["user", "comment"]} label="Comment">
-          <Input.TextArea style={{ height: 200 }} disabled={registeredUser == 'Пользователь не зарегестрирован'} />
+          <Input.TextArea
+            style={{ height: 200 }}
+            disabled={registeredUser == "Пользователь не зарегестрирован"}
+          />
         </Form.Item>
         <Form.Item
           wrapperCol={{

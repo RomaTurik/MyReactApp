@@ -1,5 +1,38 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { data } from "../data";
+import Dexie from "dexie";
+
+export const db = new Dexie("myDatabase");
+
+db.version(1).stores({
+  friends: "++id, name, age",
+  messages: "++id, user_id, title, content",
+});
+
+async function addFriend(name, age) {
+  try {
+    await db.friends.add({ name, age });
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function addComment(user_id, title, content) {
+  try {
+    await db.messages.add({ user_id, title, content });
+  } catch (error) {}
+}
+
+async function fetchFriends() {
+  const allFriends = await db.friends.toArray();
+  console.log(allFriends);
+}
+async function fetchComments() {
+  const messagesAll = await db.messages.toArray();
+  console.log(messagesAll);
+}
+
+fetchFriends();
+fetchComments();
 
 const DataContext = createContext({
   assets: [],
@@ -7,7 +40,7 @@ const DataContext = createContext({
   users: [],
   sortedUsers: [],
 });
-
+// ../database/users.db
 export function DataProviderContext({ children }) {
   const [assets, setAssets] = useState([]);
   const [users, setUsers] = useState([]);
@@ -16,9 +49,7 @@ export function DataProviderContext({ children }) {
   const [registeredUser, setRegisteredUser] = useState(
     "Пользователь не зарегестрирован"
   );
-  const [registeredUserMessages, setRegisteredUserMessages] = useState([])
-
-
+  const [registeredUserMessages, setRegisteredUserMessages] = useState([]);
   useEffect(() => {
     setTimeout(() => {
       const users = new Set(
@@ -37,20 +68,20 @@ export function DataProviderContext({ children }) {
 
   function AddAssets(values) {
     // const usersData = users.add(values.name);
-    const users =  assets.find((user)=>{
-      return user.name == values.name
-    })
-    const dataAssets = assets
+    const users = assets.find((user) => {
+      return user.name == values.name;
+    });
+    const dataAssets = assets;
 
-    if(users){
-      const newAssets = dataAssets.map((item)=>{
-        if (item == users){
-          item.message = item.message.concat(values.message)
+    if (users) {
+      const newAssets = dataAssets.map((item) => {
+        if (item == users) {
+          item.message = item.message.concat(values.message);
           console.log(item);
         }
-        return item
-      })
-      setAssets(newAssets)
+        return item;
+      });
+      setAssets(newAssets);
     }
     // setAssets((prev) => prev.concat(values));
     // setUsers(usersData);
@@ -59,8 +90,8 @@ export function DataProviderContext({ children }) {
     // }
   }
 
-  function AddComment(comment){
-    setRegisteredUserMessages((prev)=> prev.concat(comment))
+  function AddComment(comment) {
+    setRegisteredUserMessages((prev) => prev.concat(comment));
   }
 
   function FindUser(username) {
@@ -74,12 +105,11 @@ export function DataProviderContext({ children }) {
   }
 
   function SignIn(username) {
-    const user = assets.find((u)=>{
-      return u.name == username
-    })
+    const user = assets.find((u) => {
+      return u.name == username;
+    });
     setRegisteredUser(username);
-    setRegisteredUserMessages((prev) => prev.concat(user.message))
-
+    setRegisteredUserMessages((prev) => prev.concat(user.message));
   }
 
   return (
@@ -94,7 +124,7 @@ export function DataProviderContext({ children }) {
         SignIn,
         FindUser,
         AddAssets,
-        AddComment
+        AddComment,
       }}
     >
       {children}
