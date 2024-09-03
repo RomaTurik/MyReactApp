@@ -4,7 +4,7 @@ import { useContext } from "react";
 import DataContext from "../context/DataProvider";
 
 export default function AsideLayout() {
-  const { sortedUsers, FindUser } = useContext(DataContext);
+  const { users, FindUser, sortedUsers } = useContext(DataContext);
 
   function onChange(el) {
     FindUser(el);

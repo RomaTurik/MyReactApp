@@ -1,7 +1,7 @@
 import img from "../../assets/react.svg";
 import { Layout, Flex, Breadcrumb } from "antd";
 import "./HeaderLayout.css";
-import ModalApp from "../ModalApp";
+import ModalApp from "../ModalLayout/ModalApp";
 
 const { Header } = Layout;
 

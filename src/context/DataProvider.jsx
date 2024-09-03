@@ -1,46 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { data } from "../data";
-import Dexie from "dexie";
-
-export const db = new Dexie("myDatabase");
-
-db.version(1).stores({
-  friends: "++id, name, age",
-  messages: "++id, user_id, title, content",
-});
-
-async function addFriend(name, age) {
-  try {
-    await db.friends.add({ name, age });
-  } catch (error) {
-    console.log(error);
-  }
-}
-async function addComment(user_id, title, content) {
-  try {
-    await db.messages.add({ user_id, title, content });
-  } catch (error) {}
-}
-
-async function fetchFriends() {
-  const allFriends = await db.friends.toArray();
-  console.log(allFriends);
-}
-async function fetchComments() {
-  const messagesAll = await db.messages.toArray();
-  console.log(messagesAll);
-}
-
-fetchFriends();
-fetchComments();
-
+import { dataUpload, db, usersUpload } from "../database/database";
+db;
 const DataContext = createContext({
   assets: [],
   loading: false,
   users: [],
   sortedUsers: [],
 });
-// ../database/users.db
+
 export function DataProviderContext({ children }) {
   const [assets, setAssets] = useState([]);
   const [users, setUsers] = useState([]);
@@ -50,14 +17,11 @@ export function DataProviderContext({ children }) {
     "Пользователь не зарегестрирован"
   );
   const [registeredUserMessages, setRegisteredUserMessages] = useState([]);
+
   useEffect(() => {
-    setTimeout(() => {
-      const users = new Set(
-        data.reduce((acc, val) => {
-          acc.push(val.name);
-          return acc;
-        }, [])
-      );
+    setTimeout(async () => {
+      const users = await usersUpload();
+      const data = await dataUpload();
 
       setUsers(users);
       setSortedUsers(users);
@@ -67,7 +31,6 @@ export function DataProviderContext({ children }) {
   }, []);
 
   function AddAssets(values) {
-    // const usersData = users.add(values.name);
     const users = assets.find((user) => {
       return user.name == values.name;
     });
@@ -76,18 +39,67 @@ export function DataProviderContext({ children }) {
     if (users) {
       const newAssets = dataAssets.map((item) => {
         if (item == users) {
-          item.message = item.message.concat(values.message);
+          item.messages = item.messages.concat(values.message);
           console.log(item);
         }
         return item;
       });
       setAssets(newAssets);
     }
-    // setAssets((prev) => prev.concat(values));
-    // setUsers(usersData);
-    // if (userInput.value == "") {
-    //   setSortedUsers(usersData);
-    // }
+  }
+
+  function ChangeMessagesAssets(userId, title, content) {
+    const newAssets = assets.map((user) => {
+      if (user.name == registeredUser) {
+        const newMessages = user.messages.map((message) => {
+          if (registeredUserMessages.indexOf(message) == userId)
+            return {
+              user_id: userId,
+              title: title,
+              content: content,
+            };
+          return message;
+        });
+        setRegisteredUserMessages(newMessages);
+        user.messages = newMessages;
+        return user;
+      }
+      return user;
+    });
+    setAssets(newAssets);
+  }
+  function DeleteMessagesAssets(userId) {
+    const newAssets = assets.map((user) => {
+      if (user.name == registeredUser) {
+        let newMessages = user.messages.map((message) => {
+          if (registeredUserMessages.indexOf(message) == userId) return;
+          return message;
+        });
+
+        newMessages = newMessages.filter((el) => {
+          return el !== undefined;
+        });
+        setRegisteredUserMessages(newMessages);
+        user.messages = newMessages;
+        return user;
+      }
+      return user;
+    });
+    setAssets(newAssets);
+  }
+
+  function ChangePasswordAssets(newPassword) {
+    const newAssets = assets.map((user) => {
+      if (user.name == registeredUser) {
+        return {
+          name: user.name,
+          password: newPassword,
+          messages: user.messages,
+        };
+      }
+      return user;
+    });
+    setAssets(newAssets);
   }
 
   function AddComment(comment) {
@@ -105,11 +117,30 @@ export function DataProviderContext({ children }) {
   }
 
   function SignIn(username) {
+    console.log(assets);
     const user = assets.find((u) => {
       return u.name == username;
     });
+    setRegisteredUserMessages([]);
     setRegisteredUser(username);
-    setRegisteredUserMessages((prev) => prev.concat(user.message));
+    setRegisteredUserMessages((prev) => prev.concat(user.messages));
+  }
+
+  function SignUp(userData) {
+    const newUser = [
+      {
+        name: userData.username,
+        password: userData.password,
+        messages: [],
+      },
+    ];
+    const newAssets = assets.concat(newUser);
+    setAssets(newAssets);
+    setUsers((prev) => prev.concat(userData.username));
+  }
+
+  function LogOut() {
+    setRegisteredUser("Пользователь не зарегестрирован");
   }
 
   return (
@@ -125,6 +156,11 @@ export function DataProviderContext({ children }) {
         FindUser,
         AddAssets,
         AddComment,
+        SignUp,
+        LogOut,
+        ChangeMessagesAssets,
+        DeleteMessagesAssets,
+        ChangePasswordAssets,
       }}
     >
       {children}

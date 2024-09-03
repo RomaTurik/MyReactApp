@@ -1,9 +1,9 @@
 import { Typography, Form, Input, InputNumber, Button } from "antd";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import DataContext from "../context/DataProvider";
 import { Content } from "antd/es/layout/layout";
 import { useForm } from "antd/es/form/Form";
-
+import { db } from "../database/database";
 const layout = {
   labelCol: {
     span: 8,
@@ -11,9 +11,9 @@ const layout = {
 };
 
 /* eslint-disable no-template-curly-in-string */
-const validateMessages = {
-  required: "${label} is required!",
-};
+// const validateMessages = {
+//   required: "${label} is required!",
+// };
 /* eslint-enable no-template-curly-in-string */
 
 export default function AppAddCommets() {
@@ -21,18 +21,30 @@ export default function AppAddCommets() {
     useContext(DataContext);
   const [form] = useForm();
 
-  function onFinish(values) {
+  async function addMessageInDB(data) {
+    await db.messages.add(data);
+  }
+
+  useEffect(() => {
+    form.setFieldsValue({ user: { name: registeredUser } });
+  }, [registeredUser, form]);
+
+  async function onFinish(values) {
     const user = values.user;
+    const userId = await db.users
+      .where("name")
+      .equals(registeredUser)
+      .toArray();
 
     const assets = {
-      name: user.name,
+      name: registeredUser,
       message: {
+        user_id: userId[0].id,
         title: user.title,
         content: user.comment,
       },
     };
-
-    console.log(assets.message);
+    addMessageInDB(assets.message);
     AddAssets(assets);
     AddComment([assets.message]);
     form.resetFields();
@@ -49,28 +61,20 @@ export default function AppAddCommets() {
           maxWidth: 600,
           paddingLeft: 25,
         }}
-        validateMessages={validateMessages}
+        initialValues={{ user: { name: registeredUser } }}
       >
-        <Form.Item
-          name={["user", "name"]}
-          label="Name"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input
-            disabled={registeredUser == "Пользователь не зарегестрирован"}
-          />
+        <Form.Item name={["user", "name"]} label="Name">
+          <Input value={registeredUser} disabled={true} />
         </Form.Item>
         <Form.Item name={["user", "title"]} label="Title">
           <Input
+            required={true}
             disabled={registeredUser == "Пользователь не зарегестрирован"}
           />
         </Form.Item>
-        <Form.Item name={["user", "comment"]} label="Comment">
+        <Form.Item required={true} name={["user", "comment"]} label="Comment">
           <Input.TextArea
+            required={true}
             style={{ height: 200 }}
             disabled={registeredUser == "Пользователь не зарегестрирован"}
           />

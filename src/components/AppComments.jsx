@@ -6,17 +6,16 @@ import DataContext from "../context/DataProvider";
 
 export default function AppComments() {
   const { assets } = useContext(DataContext);
-  
-  const data = assets.reduce((acc,val)=>{
-    const messages = val.message.map((message)=>{
+
+  const data = assets.reduce((acc, val) => {
+    const messages = val.messages.map((message) => {
       return {
         name: val.name,
         userMessage: message,
-      }
-    })
-    return acc.concat(messages)
-  },[])
-
+      };
+    });
+    return acc.concat(messages);
+  }, []);
 
   return (
     <>
@@ -29,7 +28,7 @@ export default function AppComments() {
           pageSize: 3,
         }}
         dataSource={data}
-        renderItem={(item) =>{
+        renderItem={(item) => {
           return (
             <List.Item key={item}>
               <List.Item.Meta
@@ -40,8 +39,7 @@ export default function AppComments() {
               {item.userMessage.content}
             </List.Item>
           );
-        }
-        }
+        }}
       />
     </>
   );
